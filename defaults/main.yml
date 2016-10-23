@@ -1,3 +1,3 @@
 # Password for mariadb's root account. mandatory.
-mariadb_root_password: ''
+# mariadb_root_password: undefined
 
