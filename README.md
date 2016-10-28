@@ -10,8 +10,10 @@
 ## Requirements
 
 * Ansible 2.0+
-* Debian jessie target
-
+* One of the supported targets:
+  * Debian jessie
+  * Ubuntu Trusty
+  * Ubuntu Xenial
 
 ## Example
 
