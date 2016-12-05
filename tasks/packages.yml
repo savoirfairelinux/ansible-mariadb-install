@@ -3,6 +3,7 @@
   with_items:
     - mariadb-server
     - python-mysqldb # for ansible to connect
+    - libmysqlclient-dev # needed for mariadb client bindings
 
 - name: Ensure that mariadb is started
   service: name=mysql state=started enabled=yes
