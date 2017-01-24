@@ -1,3 +1,5 @@
 # Password for mariadb's root account. mandatory.
 # mariadb_root_password: undefined
 
+# List of user for which we accept outbound connections. A list of usernames
+mariadb_accept_outbound_login_for_these_users: []
