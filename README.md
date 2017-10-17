@@ -12,6 +12,7 @@
 * Ansible 2.0+
 * One of the supported targets:
   * Debian jessie
+  * Debian stretch
   * Ubuntu Trusty
   * Ubuntu Xenial
 

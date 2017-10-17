@@ -1,9 +1,6 @@
 - name: Ensure packages needed for mariadb are present
   apt: name={{ item }} state=present
-  with_items:
-    - mariadb-server
-    - python-mysqldb # for ansible to connect
-    - libmysqlclient-dev # needed for mariadb client bindings
+  with_items: "{{ mariadb_packages }}"
 
 - name: Ensure that mariadb is started
   service: name=mysql state=started enabled=yes
