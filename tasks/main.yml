@@ -1,4 +1,4 @@
 - include_vars: "{{ ansible_distribution }}_{{ ansible_distribution_release }}.yml"
-- include: packages.yml
-- include: accept_outbound.yml
-- include: secure_install.yml
+- import_tasks: packages.yml
+- import_tasks: accept_outbound.yml
+- import_tasks: secure_install.yml
