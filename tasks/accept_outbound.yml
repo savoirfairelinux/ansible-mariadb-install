@@ -1,8 +1,37 @@
 ---
+- name: Check if MySQL root password is set
+  community.mysql.mysql_user:
+    login_user: root
+    login_password: ''  # Attempt connection without password
+    name: root
+    host: localhost
+    state: present
+  register: mysql_root_check
+  ignore_errors: true
+  changed_when: false
+  tags: mysql
+
+- name: Set mariadb root password and privs
+  mysql_user:
+    name: root
+    password: "{{ mariadb_root_password|mandatory }}"
+    host_all: yes
+    priv: '*.*:ALL,GRANT'
+    state: present
+  when: mysql_root_check.failed and mysql_root_check.msg is search('Access denied')
+
+- name: Setup root client's root password
+  template:
+    src: user-my.cnf
+    dest: ~/.my.cnf
+    mode: 0600
+
 - name: Accept outbound connections for selected users
   mysql_user:
     name: "{{ item }}"
     host: "%"
+    login_user: root
+    login_password: "{{ mariadb_root_password }}"
   with_items: "{{ mariadb_accept_outbound_login_for_these_users }}"
 
 - name: Bind to 0.0.0.0 if we accept outbound connections
