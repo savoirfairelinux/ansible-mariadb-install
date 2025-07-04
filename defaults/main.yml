@@ -4,6 +4,7 @@
 mariadb_packages:
   - mariadb-server
   - python3-mysqldb # for ansible to connect
+  - mariadb-client # mariadb client to connect to the database
   - libmysqlclient-dev # needed for mariadb client bindings
 
 # List of user for which we accept outbound connections. A list of usernames
