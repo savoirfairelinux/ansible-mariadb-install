@@ -1,0 +1,18 @@
+---
+mariadb_required_packages:
+  - mariadb-server
+  - mariadb-client
+  - python3-pymysql     # For Ansible MySQL module with Python 3
+  - python-pymysql      # Fallback for Python 2 (if still needed)
+  - python3-mysqldb     # Alternative MySQL connector
+  - libmariadb-dev      # Development libraries
+
+mariadb_service_name: mariadb
+mariadb_config_file: /etc/mysql/mariadb.conf.d/50-server.cnf
+mariadb_socket: /var/run/mysqld/mysqld.sock
+mariadb_pid_file: /var/run/mysqld/mysqld.pid
+mariadb_log_error: /var/log/mysql/error.log
+mariadb_datadir: /var/lib/mysql
+
+# MariaDB version specific settings for Ubuntu 18.04
+mariadb_version: "10.1"  # Default version in Ubuntu 18.04 repos
