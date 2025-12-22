@@ -2,3 +2,4 @@
 - import_tasks: packages.yml
 - import_tasks: accept_outbound.yml
 - import_tasks: secure_install.yml
+- import_tasks: ssl_setup.yml

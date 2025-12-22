@@ -9,3 +9,9 @@ mariadb_packages:
 
 # List of user for which we accept outbound connections. A list of usernames
 mariadb_accept_outbound_login_for_these_users: []
+
+# SSL Configuration
+mariadb_enable_ssl: false
+mariadb_ssl_cert_dir: /etc/mysql/ssl
+mariadb_ssl_cert_validity_days: 10950  # 30 years
+mariadb_require_secure_transport: false  # Set to true to enforce SSL connections

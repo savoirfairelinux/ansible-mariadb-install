@@ -1,0 +1,88 @@
+---
+# SSL Setup for MariaDB
+# This task file handles SSL certificate generation and configuration
+
+- name: Ensure /etc/mysql directory has correct permissions
+  file:
+    path: /etc/mysql
+    state: directory
+    owner: mysql
+    group: mysql
+    mode: '0755'
+  when: mariadb_enable_ssl | bool
+
+- name: Create SSL directory for MariaDB
+  file:
+    path: "{{ mariadb_ssl_cert_dir }}"
+    state: directory
+    owner: mysql
+    group: mysql
+    mode: '0750'
+  when: mariadb_enable_ssl | bool
+
+- name: Copy SSL certificate generation script
+  template:
+    src: generate-mysql-ssl-cert.sh
+    dest: /tmp/generate-mysql-ssl-cert.sh
+    mode: '0755'
+  when: mariadb_enable_ssl | bool
+
+- name: Generate SSL certificates for MariaDB
+  command: /tmp/generate-mysql-ssl-cert.sh {{ mariadb_ssl_cert_validity_days }} {{ mariadb_ssl_cert_dir }}
+  args:
+    creates: "{{ mariadb_ssl_cert_dir }}/ca-cert.pem"
+  when: mariadb_enable_ssl | bool
+  register: ssl_cert_generation
+
+- name: Set ownership of SSL certificates
+  file:
+    path: "{{ mariadb_ssl_cert_dir }}/{{ item }}"
+    owner: mysql
+    group: mysql
+    mode: '0640'
+  loop:
+    - ca-cert.pem
+    - ca-key.pem
+    - server-cert.pem
+    - server-key.pem
+    - client-cert.pem
+    - client-key.pem
+  when: mariadb_enable_ssl | bool
+
+- name: Configure MariaDB SSL CA certificate
+  lineinfile:
+    path: /etc/mysql/mariadb.conf.d/50-server.cnf
+    regexp: '^#?\s*ssl-ca\s*='
+    line: "ssl-ca = {{ mariadb_ssl_cert_dir }}/ca-cert.pem"
+    state: "{{ 'present' if mariadb_enable_ssl else 'absent' }}"
+  notify: restart mariadb
+
+- name: Configure MariaDB SSL server certificate
+  lineinfile:
+    path: /etc/mysql/mariadb.conf.d/50-server.cnf
+    regexp: '^#?\s*ssl-cert\s*='
+    line: "ssl-cert = {{ mariadb_ssl_cert_dir }}/server-cert.pem"
+    state: "{{ 'present' if mariadb_enable_ssl else 'absent' }}"
+  notify: restart mariadb
+
+- name: Configure MariaDB SSL server key
+  lineinfile:
+    path: /etc/mysql/mariadb.conf.d/50-server.cnf
+    regexp: '^#?\s*ssl-key\s*='
+    line: "ssl-key = {{ mariadb_ssl_cert_dir }}/server-key.pem"
+    state: "{{ 'present' if mariadb_enable_ssl else 'absent' }}"
+  notify: restart mariadb
+
+- name: Configure MariaDB require secure transport
+  lineinfile:
+    path: /etc/mysql/mariadb.conf.d/50-server.cnf
+    regexp: '^#?\s*require-secure-transport\s*='
+    line: "require-secure-transport = on"
+    state: "{{ 'present' if (mariadb_enable_ssl and mariadb_require_secure_transport) else 'absent' }}"
+  notify: restart mariadb
+
+- name: Clean up temporary SSL generation script
+  file:
+    path: /tmp/generate-mysql-ssl-cert.sh
+    state: absent
+  when: mariadb_enable_ssl | bool
