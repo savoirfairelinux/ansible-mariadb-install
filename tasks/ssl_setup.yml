@@ -39,7 +39,7 @@
     path: "{{ mariadb_ssl_cert_dir }}/{{ item }}"
     owner: mysql
     group: mysql
-    mode: '0640'
+    mode: '0644'
   loop:
     - ca-cert.pem
     - ca-key.pem
@@ -71,14 +71,6 @@
     regexp: '^#?\s*ssl-key\s*='
     line: "ssl-key = {{ mariadb_ssl_cert_dir }}/server-key.pem"
     state: "{{ 'present' if mariadb_enable_ssl else 'absent' }}"
-  notify: restart mariadb
-
-- name: Configure MariaDB require secure transport
-  lineinfile:
-    path: /etc/mysql/mariadb.conf.d/50-server.cnf
-    regexp: '^#?\s*require-secure-transport\s*='
-    line: "require-secure-transport = on"
-    state: "{{ 'present' if (mariadb_enable_ssl and mariadb_require_secure_transport) else 'absent' }}"
   notify: restart mariadb
 
 - name: Clean up temporary SSL generation script
