@@ -158,7 +158,7 @@ openssl verify -CAfile ca-cert.pem server-cert.pem client-cert.pem
 # Set appropriate permissions
 echo ""
 echo -e "${GREEN}=== Setting File Permissions ===${NC}"
-chmod 600 ca-key.pem server-key.pem client-key.pem
+chmod 644 ca-key.pem server-key.pem client-key.pem
 chmod 644 ca-cert.pem server-cert.pem client-cert.pem
 
 # Display certificate information
